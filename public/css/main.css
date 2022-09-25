@@ -24,9 +24,9 @@ body {
 
 /*Header Picture*/
 #mainpic {
-    background-image:url(../images/header.png);
+    background-image:url(../images/header.jpg);
     width:1540px;
-    height:200px;
+    height:175px;
  }
 
  /*Purple Bar Picture*/
@@ -486,3 +486,35 @@ img.stock-details {
 .form-row .col-2 input{ 
    width:fit-content;
 }
+
+.record-table {
+   font-family: Arial;
+   border-collapse: collapse;
+   width: inherit;
+   padding:50px;
+   font: 14px Arial, Helvetica, sans-serif, bold;
+   margin: 0 auto;
+ }
+ 
+ .record-table td, #record-table th {
+   border: 2px solid #ddd;
+   padding: 8px;
+   background-color: #ffffff;
+   box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.1);
+ }
+ 
+ .record-table th {
+   background-color: #95A5A6;
+   font-size: 14px;
+   text-transform: uppercase;
+   letter-spacing: 0.03em;
+   padding-top: 12px;
+ }
+ 
+ .record-table tr:nth-child(even){
+   background-color: #f2f2f2;
+ }
+ 
+ .record-table p {
+   display:inline;
+ }

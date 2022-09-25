@@ -63,7 +63,7 @@
                         </div>
                          <div class="innerRight">
                             <div class="horizontal-card-footer"><br>
-                                <a href = "{{ route('stockDetails', [ 'ISBN13'=> $stock->ISBN13 ]) }}">
+                                <a href = "{{ route('bookDetails', [ 'ISBN13'=> $stock->ISBN13 ]) }}">
                                     <span class="card-text-stock">Book Title: {{ $stock->bookTitle }}</span></a><br><br>
                                 <span class="card-text-stock">ISBN-13 Number: {{ $stock->ISBN13 }}</span><br><br>
                                 @if ($stock->qty > 0)

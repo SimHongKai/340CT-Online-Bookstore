@@ -29,7 +29,8 @@ class HomeController extends Controller
     public function index()
     {
 
-        // get ISBN of Top 3 Borrowed
+
+        // get ISBN of Top 3 Purchased
         $popularStock = DB::table('orderitem')
                         ->select('ISBN13', DB::raw('count(*) as total'))
                         ->groupBy('ISBN13')
@@ -39,11 +40,15 @@ class HomeController extends Controller
         
         $popularStock = Stock::findMany($popularStock);
 
+        $newStock = Stock::orderBy("created_at", "DESC")
+                            ->limit(3)
+                            ->get();
+
         if (Auth::user()){
             $this->setShoppingCartSession(Auth::user()->id);
         }
 
-        return view('home')->with(compact('popularStock'));
+        return view('home')->with(compact('popularStock', 'newStock'));
     }
 
     /**

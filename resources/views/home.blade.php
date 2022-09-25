@@ -29,7 +29,7 @@
     <div class="container-fluid">
         <div id='content'>
             <h1><font face='Impact'>HOME PAGE</font></h1>
-        <div class="container">
+            <div class="container">
             <!-- Print message that order was made -->
             @if(Session::has('success'))
                 <div class="alert alert-success">{{Session::get('success')}}</div>
@@ -37,7 +37,9 @@
             @if(Session::has('fail'))
                 <div class="alert alert-danger">{{Session::get('fail')}}</div>
             @endif
+            <!-- Popular Stock -->
             <div class="card2">
+                <h3><font face='Impact'>Popular Stock</font></h3>
                 <ul>
                     @foreach ($popularStock as $stock) 
                         <li>
@@ -65,7 +67,39 @@
                         </li>
                     @endforeach
                 </ul>
-                </div>
+            </div>
+            <!-- New Stock -->
+            <div class="card2">
+                <h3><font face='Impact'>New Stock</font></h3>
+                <ul>
+                    @foreach ($newStock as $stock) 
+                        <li>
+                            <a href = "{{ route('bookDetails', [ 'ISBN13'=> $stock->ISBN13 ]) }}">
+                                <img class="card-img-top" src="{{ asset('book_covers')}}/{{$stock->coverImg }}"/>
+                            </a>
+                            <br>
+                            <a href = "{{ route('bookDetails', [ 'ISBN13'=> $stock->ISBN13 ]) }}">
+                                <h5>{{ $stock->bookTitle }}</h5>
+                            </a>
+                            <br>
+
+                            <h5>Price: RM{{ $stock->retailPrice }}</h4><br>
+                            @if (Auth::user() && Auth::user()->privilege == 1)
+                                @if ($stock->qty > 0)
+                                    <h5>Current Stock: {{ $stock->qty}}</h5><br>
+                                    <div id="home-button">
+                                        <button name="addButton" onclick="addItemToCart({{ $stock->ISBN13 }})" 
+                                        class="btn btn-info">Add to Cart</button>
+                                    </div>
+                                @else
+                                    <span class="home-text-details" style="background-color: red">OUT OF STOCK</span>
+                                @endif
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+
             </div>
         </div>
     <div>

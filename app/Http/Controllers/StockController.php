@@ -6,6 +6,10 @@ use App\Models\Stock;
 use Illuminate\Http\Request;
 use DB;
 
+
+use PHPMailer\PHPMailer\PHPMailer;  
+use PHPMailer\PHPMailer\Exception;
+
 class StockController extends Controller
 {
     /**
@@ -14,7 +18,7 @@ class StockController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function manageStocksView() {
-        $stocks = DB::table('stock')->paginate(3);
+        $stocks = DB::table('stock')->orderBy('bookTitle')->paginate(3);
         return view('stock.stocks')->with(compact('stocks'));
     }
 
@@ -35,7 +39,7 @@ class StockController extends Controller
             $query = $query->where('qty', '>=', $request->qty);
         }
 
-        $stocks = $query->paginate(3);
+        $stocks = $query->orderBy('bookTitle')->paginate(3);
 
         return view('stock.stocks')->with(compact('stocks'));
     }
@@ -127,6 +131,10 @@ class StockController extends Controller
                 $prev_path = $path;
             }
             $res = $checkStock->save();
+            
+            // send email to users who wishlisted the book
+            $this->sendWishlistEmail($checkStock->ISBN13);
+
         // Create new record if doesn't
         }else {
             $stock = new Stock();
@@ -243,16 +251,85 @@ class StockController extends Controller
             return null;
     }
 
-    public function viewBookDetails(Request $request)
-    {
-        if ($request != null){
-            $stock = Stock::find($request->ISBN13);
-            return view('bookDetail')->with('stock', $stock);
+    //-------------------------------------- Send Payment Email -------------------------------------------------------------//
+    public function sendWishlistEmail($ISBN13){
+        // get users who wishlisted the stock
+        $user_list = DB::table('wishlists')
+                    ->select('users.name', 'users.email')
+                    ->join('users', 'users.id', '=', 'wishlists.userID')
+                    ->where('wishlists.ISBN13', '=', $ISBN13)
+                    ->get();
+        // get Wishlisted Stock Info
+        $wishlistedStock = Stock::find($ISBN13);
+        // send email to each user
+        foreach($user_list as $user){
+            $emailBody = $this->composeEmailBody($wishlistedStock);
+            $this->sendEmail($emailBody, $user);
         }
-        else{
-            return view('home');
-        }
-
     }
-   
+
+    // ========== [ Compose Email ] ================
+    public function sendEmail($emailBody, $user) {
+        //require base_path("vendor/autoload.php");
+        $mail = new PHPMailer();     // Passing `true` enables exceptions
+    
+        // Email server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.mailgun.org';             //  smtp host 
+        $mail->SMTPAuth = true;
+        $mail->Username = '';   //  sender username HERE
+        $mail->Password = '';       // sender password HERE
+        $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
+        $mail->Port = 587;                         // port - 587/465
+
+        $mail->setFrom('', 'Online Bookstore'); // HERE
+        $mail->addAddress('simhk625@gmail.com');
+
+        $mail->addReplyTo('simhk625@gmail.com', 'sim');
+
+        $mail->isHTML(true);                // Set email content format to HTML
+
+        $mail->Subject = $user->name . " A Wishlisted Book is in Stock";
+        $mail->Body = $emailBody;
+                                
+        // only redirect for failure, success is handled by payment function
+        if( !$mail->send() ) {
+            return route('home');
+        }
+    }
+
+    /**
+     * Composes the email body for wishlisted book email
+     * 
+     *  @return String
+    */
+    public function composeEmailBody($stock){
+
+        $emailBody  ='<div class="container" style="padding: 1rem; background: #FFFFFF;">
+                        <p>A book you have wishlisted has just increased its stock!</p>
+                        <p>Order now before it is too late!</p>
+                        <table style="border:1px solid;width:600px;text-align:left">
+                            <tbody>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>ISBN 13</th>
+                                    <th>Unit Price (RM)</th>
+                                    <th>Current Quantity</th>
+                                </tr>
+                                
+                                <tr>
+                                    <td>' . $stock->bookTitle . '</td>
+                                    <td>' . $stock->ISBN13 . '</td>
+                                    <td>' . $stock->retailPrice . '</td>
+                                    <td>' . $stock->qty . '</td>
+                                </tr>
+                        
+                            </tbody>
+                        </table>
+
+                        <p>Thank You. And Please continue using our Online Bookstore!</p>
+                    </div>';
+                        
+        return $emailBody;
+    }
 }

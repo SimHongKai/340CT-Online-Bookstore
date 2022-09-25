@@ -22,7 +22,7 @@
         <p2 id = "cartQty">{{ $itemCount }}</p2> 
         <!--Price!-->
         <a id = "cartPrice" href="{{ route('shoppingCart') }}">RM{{ $price }}</a> 
-        <a id = "username" href="{{ route('profile') }}">{{ Auth::user()->name }}</a>
+        <a id = "username" href="{{ route('profileOrder') }}">{{ Auth::user()->name }}</a>
         <a href="{{ route('logout') }}"
             onclick="event.preventDefault();
             document.getElementById('logout-form').submit();">
@@ -34,11 +34,11 @@
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('catalogue') }}">Catalogue</a>
         <a href="{{ route('stocks') }}">Stock Level</a>
+        <a href="{{ route('orderHistory') }}">Orders</a>
         <p1></p1>
         <p1></p1>
         <p1></p1>
-        <p1></p1>
-        <a id = "username" href="{{ route('profile') }}">{{ Auth::user()->name }}</a>
+        <a id = "username" href="{{ route('profileOrder') }}">{{ Auth::user()->name }}</a>
         <a href="{{ route('logout') }}"
             onclick="event.preventDefault();
             document.getElementById('logout-form').submit();">

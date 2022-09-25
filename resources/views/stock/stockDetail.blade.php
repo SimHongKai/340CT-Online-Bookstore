@@ -26,7 +26,7 @@
 
     <body>
         @include('header')
-        <div class = "container">
+        <div class = "container-fluid">
             <div id='content'>
                 <h1><font face='Impact'>Stock Details</font></h1>
                 @csrf

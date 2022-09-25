@@ -8,6 +8,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\CatalogueController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,10 @@ Route::middleware('auth')->group(function(){
     // Edit Stock
     Route::get('/editStocks', [StockController::class,'editStocksView'])->name('editStocks');
     Route::post('/edit-stock',[StockController::class,'editStock'])->name('edit-stock');
+    // Order History
+    Route::get('/orders', [OrderController::class, 'orderHistoryView'])->name('orderHistory');
+    // Order History
+    Route::get('/order_details/{orderID}', [OrderController::class, 'orderDetailsView'])->name('orderDetails');
     
     // Shopping Cart
     Route::get('/shoppingCart', [ShoppingCartController::class,'shoppingCartView'])->name('shoppingCart');  
@@ -65,11 +71,14 @@ Route::middleware('auth')->group(function(){
     Route::post('/payment',[PaymentController::class, 'processPayment'])->name('submitpayment');
 
     // Profile
-    Route::get('/profile', [ProfileController::class,'profileView'])->name('profile');
+    Route::get('/profile_order', [ProfileController::class,'profileOrderView'])->name('profileOrder');
+    Route::get('/profile_wishlist', [ProfileController::class,'profileWishlistView'])->name('profileWishlist');
 
     // Route for xmlhttpRequest
     Route::post('/addStocks/get-stock', [StockController::class,'getStock']);
     Route::post('/editStocks/get-stock', [StockController::class,'getStock']);
     Route::post('/shoppingCart/get-user-address', [ShoppingCartController::class,'getUserAddress']);
-
+    // Wishlist
+    Route::post('/book_details/wishlist_add', [WishlistController::class,'wishlistAdd'])->name('wishlistAdd');
+    Route::post('/book_details/wishlist_remove', [WishlistController::class,'wishlistRemove'])->name('wishlistRemove');
 });

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stock;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Auth;
 use DB;
 
 class CatalogueController extends Controller
@@ -14,7 +16,7 @@ class CatalogueController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function catalogueListView() {
-        $stocks = DB::table('stock')->paginate(3);
+        $stocks = DB::table('stock')->orderBy('bookTitle')->paginate(3);
         return view('catalogue')->with(compact('stocks'));
     }
 
@@ -35,7 +37,7 @@ class CatalogueController extends Controller
             $query = $query->where('qty', '>=', $request->qty);
         }
 
-        $stocks = $query->paginate(3);
+        $stocks = $query->orderBy('bookTitle')->paginate(3);
 
         return view('catalogue')->with(compact('stocks'));
     }
@@ -49,6 +51,9 @@ class CatalogueController extends Controller
     {
         if ($request != null){
             $stock = Stock::find($request->ISBN13);
+            $stock->wishlisted = Wishlist::where('userID', Auth::id())->where('ISBN13', $request->ISBN13)
+                                ->count();
+
             return view('bookDetail')->with('stock', $stock);
         }
         else{

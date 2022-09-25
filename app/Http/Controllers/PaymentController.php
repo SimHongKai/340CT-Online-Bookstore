@@ -6,7 +6,7 @@ use App\Models\Postage;
 use App\Models\User;
 use App\Models\Stock;
 use App\Models\CartItem;
-use App\Models\Orders;
+use App\Models\Order;
 use App\Models\OrderItem;
 use Session;
 use DB;
@@ -51,7 +51,7 @@ class PaymentController extends Controller{
             isset($shippingAddress['country']);
 
             //put into Orders
-            $newOrder = new Orders();
+            $newOrder = new Order();
             $newOrder->userID = $userId;
             $newOrder->basePrice = $this->getBasePrice();
             $newOrder->postagePrice = $this->getPostagePrice();
@@ -65,7 +65,7 @@ class PaymentController extends Controller{
             //Got save to Orders
             $res = $newOrder->save();
             //Take first ID
-            $orderId = Orders::where('userID','=',$userId)->latest('orderID')->limit('1')->pluck('orderID');
+            $orderId = Order::where('userID','=',$userId)->latest('orderID')->limit('1')->pluck('orderID');
 
             if($res && $orderId){
                 $cartItem = CartItem::where('userID','=',$userId)->get();
@@ -177,7 +177,7 @@ class PaymentController extends Controller{
         }
     }
 
-    //-------------------------------------- Send Payment Email -------------------------------------------------------------//
+    //-------------------------------------- Send Order Email -------------------------------------------------------------//
     public function sendOrderEmail($orderID){
         $emailBody = $this->composeEmailBody($orderID);
         $this->sendEmail($emailBody);
@@ -275,7 +275,7 @@ class PaymentController extends Controller{
     }
 
     public function getOrder($orderID){
-        $order = Orders::find($orderID);
+        $order = Order::find($orderID);
         if ($order){
             $order = $order->first();
         }

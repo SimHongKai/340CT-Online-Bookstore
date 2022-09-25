@@ -22,14 +22,30 @@
         <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" />
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/wishlist.css') }}">
     </head>
 
     <body>
         @include('header')
-        <div class = "container">
+        <div class = "container-fluid">
             <div id='content'>
                 <h1><font face='Impact'>Book Details</font></h1>
-                @csrf
+                
+                <!-- add Wishlist Button for Users -->
+                @auth
+                <div class="col-lg-6 col-sm-9 text-right">
+                    <button type="button" data-context="investor" data-context-action="view" data-context-id="7" id="wishlist_btn"
+                    onclick="wishlistBtnClick({{ $stock->ISBN13 }})"
+                    @if ($stock->wishlisted == 1)
+                        class="pp-bookmark-btn btn btn-default btn-lg pull-right active"
+                    @else
+                        class="pp-bookmark-btn btn btn-default btn-lg pull-right"
+                    @endif
+                    >
+                    </button>
+                </div>
+                @endauth
+
                 <div id="cardStock" class="card-book-details">
                     <div class="row">
                         <div class="innerLeft">
@@ -54,8 +70,8 @@
                                 @if (session()->get('userPrivilige') == 2)
                                 @elseif ($stock->qty > 0)
                                 <div id="home-button">
-                                    <button name="addButton" onclick="addItemToCart({{ $stock->ISBN13 }})" 
-                                    class="btn btn-info">Add to Cart</button>
+                                    <a name="addButton" onclick="addItemToCart({{ $stock->ISBN13 }})" 
+                                    class="btn btn-info" style="color: wheat;">Add to Cart</a>
                                 </div>
                                 @else
                                 <span class="home-text-details" style="background-color: red">OUT OF STOCK</span>
@@ -73,10 +89,16 @@
     <script src="{{ asset('js/jquery-3.4.1.min.js') }}"></script>
     <!-- bootstrap js -->
     <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <!-- bookmark js -->
+    <script type="text/javascript">
+	 	var addWishlistURL = "{{ route('wishlistAdd') }}";
+        var removeWishlistURL = "{{ route('wishlistRemove') }}";
+	</script>
+    <script src="{{ asset('js/wishlist.js') }}"></script>
 
     <script>
         function addItemToCart(ISBN13){
-            fetch('{{ route('home')}}', {
+            fetch('{{ route('addCart')}}', {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json, text-plain, */*",
