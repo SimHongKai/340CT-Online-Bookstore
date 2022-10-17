@@ -32,6 +32,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Catalogue Views
 Route::get('/catalogue', [CatalogueController::class, 'catalogueListView'])->name('catalogue');
+Route::get('/catalogue_filtered', [CatalogueController::class, 'filterCatalogue'])->name('catalogue_filtered');
 Route::get('/book_details/{ISBN13}', [CatalogueController::class, 'bookDetailsView'])->name('bookDetails');
 
 // All Routes which needs account login to access

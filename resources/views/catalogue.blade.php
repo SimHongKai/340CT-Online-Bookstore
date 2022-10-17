@@ -31,7 +31,9 @@
                 <h1><font face='Impact'>Catalogue</font></h1>
 
                 <!-- Filter Catalogue Form -->
-                <form method="get" action="{{ route('stocks_filtered') }}" enctype="multipart/form-data">
+
+                <form method="get" action="{{ route('catalogue_filtered') }}" enctype="multipart/form-data">
+
                     @csrf
                     <div class="form-group row">
                         <label for="bookTitle" class="col-sm-2 col-form-label">Book Title:</label>
